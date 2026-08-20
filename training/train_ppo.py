@@ -13,8 +13,8 @@ from environments.obstacle_env import ObstacleEnv
 # Configuration
 # --------------------------------------------------
 
-TOTAL_TIMESTEPS = 100_000
-CHECKPOINT_INTERVAL = 10_000
+TOTAL_TIMESTEPS = 50000
+CHECKPOINT_INTERVAL = 5000
 
 # Resolve path relative to this script's directory
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,7 +40,9 @@ env = FlatObsWrapper(env)
 # --------------------------------------------------
 # 3. Create PPO agent
 # --------------------------------------------------
-
+''' PPO changes the neural network's parameters so that the NPC becomes more likely to choose 
+actions that produced good results and less likely to choose actions that produced bad results.
+'''
 model = PPO(
     "MlpPolicy", #This is the brain/neural network that receives observations and produces actions.
     env,

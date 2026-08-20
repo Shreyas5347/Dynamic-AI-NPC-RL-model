@@ -3,15 +3,21 @@ import minigrid
 import pygame
 import time
 import os
+import sys
+
+# Add project root to path so environments package can be resolved
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from minigrid.wrappers import FlatObsWrapper
 from stable_baselines3 import PPO
+from environments.obstacle_env import ObstacleEnv
 
 
 # ==================================================
 # SETTINGS
 # ==================================================
 
-CHECKPOINT = 100000
+CHECKPOINT = 25000
 
 MODEL_PATH = f"models/checkpoints/ppo_{CHECKPOINT}"
 
@@ -23,11 +29,9 @@ MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "checkpoints", f"ppo_{CHECKPOI
 # CREATE ENVIRONMENT
 # ==================================================
 
-env = gym.make(
-    "MiniGrid-Empty-8x8-v0",
+env = ObstacleEnv(
     render_mode="human"
 )
-
 env = FlatObsWrapper(env)
 
 
@@ -139,8 +143,8 @@ episode = 1
 # RUN TRAINED NPC
 # ==================================================
 
-MAX_EPISODES = 5
-MAX_STEPS_PER_EPISODE = 100
+MAX_EPISODES = 10
+MAX_STEPS_PER_EPISODE = 500
 
 episode = 1
 total_steps = 0
@@ -161,7 +165,7 @@ while episode <= MAX_EPISODES:
 
         action, _states = model.predict(
             observation,
-            deterministic=True
+            deterministic=False
         )
 
         observation, reward, terminated, truncated, info = env.step(
