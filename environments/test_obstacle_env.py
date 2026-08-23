@@ -1,38 +1,42 @@
-import gymnasium as gym
 import time
-import os
-import sys
 
-# Add project root to path so environments package can be resolved
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from environments.obstacle_env import ObstacleEnv
+from environments.obstacle_env import RandomObstacleEnv
 
 
-env = ObstacleEnv(
+env = RandomObstacleEnv(
     render_mode="human"
 )
 
-observation, info = env.reset()
 
-print("Environment started!")
+# --------------------------------------------------
+# Run multiple episodes
+# --------------------------------------------------
 
-for step in range(100):
+for episode in range(5):
 
-    # Random action
-    action = env.action_space.sample()
+    observation, info = env.reset()
 
-    observation, reward, terminated, truncated, info = env.step(
-        action
+    print(
+        f"\nEpisode {episode + 1}"
     )
 
-    time.sleep(0.2)
+    for step in range(100):
 
-    if terminated or truncated:
+        action = env.action_space.sample()
 
-        print("Episode finished!")
+        observation, reward, terminated, truncated, info = env.step(
+            action
+        )
 
-        observation, info = env.reset()
+        time.sleep(0.15)
+
+        if terminated or truncated:
+
+            print(
+                f"Episode finished after {step + 1} steps"
+            )
+
+            break
 
 
 env.close()

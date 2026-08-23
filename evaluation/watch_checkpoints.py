@@ -17,7 +17,7 @@ from environments.obstacle_env import ObstacleEnv
 # SETTINGS
 # ==================================================
 
-CHECKPOINT = 25000
+CHECKPOINT = 5000
 
 MODEL_PATH = f"models/checkpoints/ppo_{CHECKPOINT}"
 
