@@ -5,16 +5,16 @@ import sys
 
 # Add project root to path so environments package can be resolved
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+from environments.obstacle_env import RandomObstacleEnv
 from stable_baselines3 import PPO
 from minigrid.wrappers import FlatObsWrapper
-from environments.obstacle_env import ObstacleEnv
+#from environments.obstacle_env import obstacle_env   
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
 
-TOTAL_TIMESTEPS = 50000
-CHECKPOINT_INTERVAL = 5000
+TOTAL_TIMESTEPS = 100000
+CHECKPOINT_INTERVAL = 10000
 
 # Resolve path relative to this script's directory
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,8 +26,7 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 # 1. Create MiniGrid environment
 # --------------------------------------------------
 
-env = ObstacleEnv()
-
+env = RandomObstacleEnv()
 
 # --------------------------------------------------
 # 2. Convert MiniGrid observation into a flat vector
