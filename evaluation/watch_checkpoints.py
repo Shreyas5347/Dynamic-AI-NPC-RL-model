@@ -11,15 +11,16 @@ from stable_baselines3 import PPO
 
 
 from environments.obstacle_env import RandomObstacleEnv
+from environments.navigation_wrapper import NavigationActionWrapper
 
 # ==================================================
 # SETTINGS
 # ==================================================
 
-CHECKPOINT = 40000
+CHECKPOINT = 100000
 
 MAX_EPISODES = 10
-MAX_STEPS_PER_EPISODE = 1000
+MAX_STEPS_PER_EPISODE = 200
 
 SLEEP_TIME = 0.15
 
@@ -178,6 +179,7 @@ env = RandomObstacleEnv(
     render_mode="human"
 )
 
+env = NavigationActionWrapper(env)
 env = FlatObsWrapper(env)
 
 
