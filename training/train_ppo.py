@@ -8,7 +8,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from environments.obstacle_env import RandomObstacleEnv
 from stable_baselines3 import PPO
 from minigrid.wrappers import FlatObsWrapper
-#from environments.obstacle_env import obstacle_env   
+from environments.navigation_wrapper import NavigationActionWrapper
+   
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
@@ -27,6 +28,7 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 # --------------------------------------------------
 
 env = RandomObstacleEnv()
+env = NavigationActionWrapper(env)
 
 # --------------------------------------------------
 # 2. Convert MiniGrid observation into a flat vector
@@ -39,6 +41,21 @@ env = FlatObsWrapper(env)
 # --------------------------------------------------
 # 3. Create PPO agent
 # --------------------------------------------------
+'''
+NPC Environment
+      ↓
+NPC takes action
+      ↓
+Gets reward
+      ↓
+PPO analyzes the result
+      ↓
+Updates the NPC's policy
+      ↓
+NPC makes better decisions
+'''
+#PPO is a reinforcement learning algorithm that trains an agent by collecting experiences from 
+#the environment and gradually improving its policy so that it chooses actions that maximize cumulative reward.
 ''' PPO changes the neural network's parameters so that the NPC becomes more likely to choose 
 actions that produced good results and less likely to choose actions that produced bad results.
 '''
