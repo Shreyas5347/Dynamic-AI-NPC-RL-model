@@ -23,23 +23,19 @@ class RandomObstacleEnv(MiniGridEnv):
         )
 
     # ==================================================
-    # Generate the grid
+    # GENERATE GRID
     # ==================================================
 
     def _gen_grid(self, width, height):
 
         while True:
 
-            # --------------------------------------------------
-            # Create empty grid
-            # --------------------------------------------------
+            self.grid = Grid(
+                width,
+                height
+            )
 
-            self.grid = Grid(width, height)
-
-            # --------------------------------------------------
             # Outer walls
-            # --------------------------------------------------
-
             self.grid.wall_rect(
                 0,
                 0,
@@ -47,65 +43,62 @@ class RandomObstacleEnv(MiniGridEnv):
                 height
             )
 
-            # --------------------------------------------------
-            # NPC starting position
-            # --------------------------------------------------
-
+            # Agent
             self.agent_pos = (1, 1)
             self.agent_dir = 0
 
-            # --------------------------------------------------
-            # Goal position
-            # --------------------------------------------------
-
-            goal_pos = (
+            # Goal
+            self.goal_pos = (
                 width - 2,
                 height - 2
             )
 
             self.put_obj(
                 Goal(),
-                goal_pos[0],
-                goal_pos[1]
+                self.goal_pos[0],
+                self.goal_pos[1]
             )
 
             # --------------------------------------------------
-            # Generate possible obstacle positions
+            # Random obstacles
             # --------------------------------------------------
 
             possible_positions = []
 
-            for x in range(1, width - 1):
+            for x in range(
+                1,
+                width - 1
+            ):
 
-                for y in range(1, height - 1):
+                for y in range(
+                    1,
+                    height - 1
+                ):
+
+                    position = (
+                        x,
+                        y
+                    )
 
                     if (
-                        (x, y) != self.agent_pos
+                        position != self.agent_pos
                         and
-                        (x, y) != goal_pos
+                        position != self.goal_pos
                     ):
 
                         possible_positions.append(
-                            (x, y)
+                            position
                         )
-
-            # --------------------------------------------------
-            # Random number of obstacles
-            # --------------------------------------------------
 
             obstacle_count = random.randint(
                 5,
-                10
+                8
             )
 
             obstacle_positions = random.sample(
                 possible_positions,
                 obstacle_count
             )
-
-            # --------------------------------------------------
-            # Place obstacles
-            # --------------------------------------------------
 
             for x, y in obstacle_positions:
 
@@ -116,26 +109,127 @@ class RandomObstacleEnv(MiniGridEnv):
                 )
 
             # --------------------------------------------------
-            # Check if goal is reachable
+            # Make sure path exists
             # --------------------------------------------------
 
             if self._path_exists(
                 self.agent_pos,
-                goal_pos,
+                self.goal_pos,
                 width,
                 height
             ):
 
                 break
 
-            # If no path exists,
-            # generate a completely new map.
-
-        # --------------------------------------------------
-        # Mission
-        # --------------------------------------------------
-
         self.mission = "reach the goal"
+
+        # Initial distance
+        self.previous_distance = self._manhattan_distance(
+            self.agent_pos,
+            self.goal_pos
+        )
+
+    # ==================================================
+    # RESET
+    # ==================================================
+
+    def reset(
+        self,
+        *,
+        seed=None,
+        options=None
+    ):
+
+        observation, info = super().reset(
+            seed=seed,
+            options=options
+        )
+
+        self.previous_distance = (
+            self._manhattan_distance(
+                self.agent_pos,
+                self.goal_pos
+            )
+        )
+
+        return observation, info
+
+    # ==================================================
+    # STEP
+    # ==================================================
+
+    def step(
+        self,
+        action
+    ):
+
+        # Store old position
+        old_position = self.agent_pos
+
+        # Let MiniGrid perform the action
+        observation, reward, terminated, truncated, info = super().step(
+            action
+        )
+
+        # --------------------------------------------------
+        # Distance before/after action
+        # --------------------------------------------------
+
+        old_distance = self._manhattan_distance(
+            old_position,
+            self.goal_pos
+        )
+
+        new_distance = self._manhattan_distance(
+            self.agent_pos,
+            self.goal_pos
+        )
+
+        # --------------------------------------------------
+        # Reward shaping
+        # --------------------------------------------------
+
+        # Small penalty for every action
+        reward = -0.01
+
+        # Reward for getting closer
+        if new_distance < old_distance:
+
+            reward += 0.1
+
+        # Penalty for moving away
+        elif new_distance > old_distance:
+
+            reward -= 0.05
+
+        # Goal reached
+        if terminated:
+
+            reward += 1.0
+
+        return (
+            observation,
+            reward,
+            terminated,
+            truncated,
+            info
+        )
+
+    # ==================================================
+    # MANHATTAN DISTANCE
+    # ==================================================
+
+    def _manhattan_distance(
+        self,
+        position_a,
+        position_b
+    ):
+
+        return (
+            abs(position_a[0] - position_b[0])
+            +
+            abs(position_a[1] - position_b[1])
+        )
 
     # ==================================================
     # BFS PATH CHECK
