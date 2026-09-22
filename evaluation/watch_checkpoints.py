@@ -17,7 +17,7 @@ from environments.navigation_wrapper import NavigationActionWrapper
 # SETTINGS
 # ==================================================
 
-CHECKPOINT = 100000
+CHECKPOINT = 10000
 
 MAX_EPISODES = 10
 MAX_STEPS_PER_EPISODE = 200
