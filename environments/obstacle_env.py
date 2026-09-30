@@ -47,18 +47,19 @@ class RandomObstacleEnv(MiniGridEnv):
             self.agent_pos = (1, 1)
             self.agent_dir = 0
 
-            # Goal
-            self.goal_pos = (
-                width - 2,
-                height - 2
-            )
+            # Goal (Random position)
+            goal_x = random.randint(1, width - 2)
+            goal_y = random.randint(1, height - 2)
+            while (goal_x, goal_y) == self.agent_pos:
+                goal_x = random.randint(1, width - 2)
+                goal_y = random.randint(1, height - 2)
 
+            self.goal_pos = (goal_x, goal_y)
             self.put_obj(
                 Goal(),
                 self.goal_pos[0],
                 self.goal_pos[1]
             )
-
             # --------------------------------------------------
             # Random obstacles
             # --------------------------------------------------

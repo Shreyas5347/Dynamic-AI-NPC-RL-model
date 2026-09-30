@@ -145,10 +145,11 @@ class EnvironmentRunner:
                     t = "empty"
                 cells.append({"x": x, "y": y, "type": t})
 
-        n_eps = len(self._episode_rewards)
-        success_rate = (self._successes / n_eps * 100) if n_eps > 0 else 0.0
-        avg_reward = sum(self._episode_rewards) / n_eps if n_eps > 0 else 0.0
-        avg_steps = sum(self._episode_steps_hist) / n_eps if n_eps > 0 else 0.0
+        successful_episodes = self._successes
+        total_episodes = len(self._episode_rewards)
+        success_rate = (successful_episodes / total_episodes * 100) if total_episodes > 0 else 0.0
+        avg_reward = sum(self._episode_rewards) / total_episodes if total_episodes > 0 else 0.0
+        avg_steps = sum(self._episode_steps_hist) / total_episodes if total_episodes > 0 else 0.0
 
         return {
             "width": raw.width,
@@ -172,8 +173,8 @@ class EnvironmentRunner:
                 "avg_reward": round(avg_reward, 4),
                 "avg_steps": round(avg_steps, 1),
                 "total_timesteps": self.checkpoint or 0,
-                "total_episodes": n_eps,
-                "successful_episodes": self._successes,
+                "total_episodes": total_episodes,
+                "successful_episodes": successful_episodes,
                 # Last 100 episode rewards for the chart
                 "episode_rewards": self._episode_rewards[-100:],
             },

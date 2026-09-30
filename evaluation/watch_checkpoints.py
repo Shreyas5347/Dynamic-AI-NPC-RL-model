@@ -352,11 +352,8 @@ average_steps = (
     MAX_EPISODES
 )
 
-success_rate = (
-    successful_episodes
-    /
-    MAX_EPISODES
-) * 100
+total_episodes = MAX_EPISODES
+success_rate = (successful_episodes / total_episodes * 100) if total_episodes > 0 else 0.0
 
 
 # ==================================================
