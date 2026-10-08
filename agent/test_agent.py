@@ -1,5 +1,6 @@
-from state import EnemyState
-from decision import decide_action
+from agent.state import EnemyState
+from agent.memory import EnemyMemory
+from agent.decision import decide_action
 
 
 state = EnemyState(
@@ -13,7 +14,8 @@ state = EnemyState(
     player_position=(10, 10),
     last_known_player_position=(10, 10)
 )
+memory = EnemyMemory()
 
-action = decide_action(state)
+action = decide_action(state, memory)
 
-print("Enemy decision:", action.value)
+print("Enemy decision:", action)

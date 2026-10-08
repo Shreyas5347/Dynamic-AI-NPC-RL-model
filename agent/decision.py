@@ -1,5 +1,10 @@
 from enum import Enum
-from state import EnemyState
+from agent.behaviors.patrol import patrol_behavior
+from agent.behaviors.chase import chase_behavior
+from agent.behaviors.attack import attack_behavior
+from agent.behaviors.search import search_behavior
+from agent.behaviors.retreat import retreat_behavior
+
 
 class EnemyAction(Enum):
     PATROL = "patrol"
@@ -7,31 +12,40 @@ class EnemyAction(Enum):
     ATTACK = "attack"
     SEARCH = "search"
     RETREAT = "retreat"
-    
-def decide_action(state: EnemyState) -> EnemyAction:
 
-    # 1. Low health → retreat
+
+def decide_action(state, memory):
+
+    # 1. Low health
     if state.health <= 30:
-        return EnemyAction.RETREAT
+        return retreat_behavior(
+            state.enemy_position,
+            state.player_position
+        )
 
-   # Player is close and NPC can attack
+    # 2. Attack
     if (
         state.player_detected
         and state.player_in_attack_range
         and state.ammo > 0
     ):
-        return EnemyAction.ATTACK
+        return attack_behavior()
 
-    # 3. Player detected but not close enough → chase
+    # 3. Chase
     if state.player_detected:
-        return EnemyAction.CHASE
+        return chase_behavior(
+            state.player_position
+        )
 
-    # 4. Player was previously detected but is now lost → search
+    # 4. Search
     if (
-        not state.player_detected
-        and state.last_known_player_position is not None
+        memory.search_active
+        and not memory.search_expired()
+        and memory.last_known_player_position is not None
     ):
-        return EnemyAction.SEARCH
+        return search_behavior(
+            memory.last_known_player_position
+        )
 
-    # 5. Nothing happening → patrol
-    return EnemyAction.PATROL
+    # 5. Otherwise patrol
+    return patrol_behavior()

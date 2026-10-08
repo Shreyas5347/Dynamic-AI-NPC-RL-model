@@ -1,4 +1,4 @@
-from memory import EnemyMemory
+from agent.memory import EnemyMemory
 
 
 memory = EnemyMemory()

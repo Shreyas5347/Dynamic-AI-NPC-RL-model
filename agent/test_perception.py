@@ -1,4 +1,4 @@
-from perception import perceive_enemy
+from agent.perception import perceive_enemy
 
 
 enemy_position = (0, 0)

@@ -1,7 +1,8 @@
-from state import EnemyState
-from memory import EnemyMemory
-from perception import perceive_enemy
-from decision import decide_action
+from agent.state import EnemyState
+from agent.memory import EnemyMemory
+from agent.perception import perceive_enemy
+from agent.decision import decide_action
+
 
 
 class EnemyAgent:
@@ -22,7 +23,8 @@ class EnemyAgent:
         player_position,
         health,
         ammo,
-        can_see_player
+        can_see_player,
+        delta_time=1.0
     ):
 
         # 1. Perception
@@ -37,10 +39,11 @@ class EnemyAgent:
         # 2. Update memory
         self.memory.update(
             player_detected=perception.player_detected,
-            player_position=player_position
+            player_position=player_position,
+            delta_time=delta_time
         )
 
-        # 3. Create current enemy state
+        # 3. Create current state
         state = EnemyState(
             health=health,
             ammo=ammo,
@@ -59,8 +62,11 @@ class EnemyAgent:
             )
         )
 
-        # 4. Make decision
-        action = decide_action(state)
+        # 4. Decision
+        action = decide_action(
+            state,
+            self.memory
+        )
 
         return state, action
 #enemyAgent connects Perception,Memory,Decision,Action
